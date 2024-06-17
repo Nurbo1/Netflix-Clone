@@ -12,28 +12,28 @@ class TitleTableViewCell: UITableViewCell {
     static let identifier = "TitleTableViewCell"
     
     
-        private let playTitleButton: UIButton = {
-            let button = UIButton()
-            let image = UIImage(systemName: "play.circle", withConfiguration: UIImage.SymbolConfiguration(pointSize: 30))
-            button.setImage(image, for: .normal)
-            button.translatesAutoresizingMaskIntoConstraints = false
-            return button
-        }()
+    private let playTitleButton: UIButton = {
+        let button = UIButton()
+        let image = UIImage(systemName: "play.circle", withConfiguration: UIImage.SymbolConfiguration(pointSize: 30))
+        button.setImage(image, for: .normal)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
     
-        private let titlePosterImageView: UIImageView = {
-            let imageView = UIImageView()
-            imageView.translatesAutoresizingMaskIntoConstraints = false
-            imageView.contentMode = .scaleAspectFill
-            imageView.clipsToBounds = true
-            return imageView
-        }()
+    private let titlePosterImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
+        return imageView
+    }()
     
-        private let titleLabel: UILabel = {
-            let label = UILabel()
-            label.translatesAutoresizingMaskIntoConstraints = false
-            return label
-        }()
-        
+    private let titleLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         contentView.addSubview(titlePosterImageView)
@@ -69,7 +69,7 @@ class TitleTableViewCell: UITableViewCell {
             playTitleButton.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
         ])
     }
-        
+    
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")

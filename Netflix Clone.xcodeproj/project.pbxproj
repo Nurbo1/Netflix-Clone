@@ -27,6 +27,7 @@
 		40E017222C20278000AC6461 /* SDWebImageMapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 40E017212C20278000AC6461 /* SDWebImageMapKit */; };
 		40E017242C204BFF00AC6461 /* TitleTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40E017232C204BFF00AC6461 /* TitleTableViewCell.swift */; };
 		40E017262C204EF000AC6461 /* TitleViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40E017252C204EF000AC6461 /* TitleViewModel.swift */; };
+		40E017282C2059ED00AC6461 /* SearchResultsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40E017272C2059ED00AC6461 /* SearchResultsViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -50,6 +51,7 @@
 		40E0171C2C2025FD00AC6461 /* TitleCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleCollectionViewCell.swift; sourceTree = "<group>"; };
 		40E017232C204BFF00AC6461 /* TitleTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleTableViewCell.swift; sourceTree = "<group>"; };
 		40E017252C204EF000AC6461 /* TitleViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleViewModel.swift; sourceTree = "<group>"; };
+		40E017272C2059ED00AC6461 /* SearchResultsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchResultsViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -104,10 +106,8 @@
 		40E017002C1EA0EC00AC6461 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				40E017012C1EA11000AC6461 /* HomeViewController.swift */,
-				40E017032C1EA13C00AC6461 /* UpcomingViewController.swift */,
-				40E017052C1EA16200AC6461 /* SearchViewController.swift */,
-				40E017072C1EA18200AC6461 /* DownloadsViewController.swift */,
+				40E0172A2C205A4800AC6461 /* General */,
+				40E017292C205A2B00AC6461 /* Core */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -153,6 +153,25 @@
 				40E017122C1F035F00AC6461 /* APICaller.swift */,
 			);
 			path = Managers;
+			sourceTree = "<group>";
+		};
+		40E017292C205A2B00AC6461 /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				40E017012C1EA11000AC6461 /* HomeViewController.swift */,
+				40E017032C1EA13C00AC6461 /* UpcomingViewController.swift */,
+				40E017052C1EA16200AC6461 /* SearchViewController.swift */,
+				40E017072C1EA18200AC6461 /* DownloadsViewController.swift */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		40E0172A2C205A4800AC6461 /* General */ = {
+			isa = PBXGroup;
+			children = (
+				40E017272C2059ED00AC6461 /* SearchResultsViewController.swift */,
+			);
+			path = General;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -242,6 +261,7 @@
 				40E017132C1F035F00AC6461 /* APICaller.swift in Sources */,
 				40E017082C1EA18200AC6461 /* DownloadsViewController.swift in Sources */,
 				40E016EB2C1E9E8A00AC6461 /* AppDelegate.swift in Sources */,
+				40E017282C2059ED00AC6461 /* SearchResultsViewController.swift in Sources */,
 				40E017112C1EB92900AC6461 /* HeroHeaderUiView.swift in Sources */,
 				40E016ED2C1E9E8A00AC6461 /* SceneDelegate.swift in Sources */,
 				40E017042C1EA13C00AC6461 /* UpcomingViewController.swift in Sources */,

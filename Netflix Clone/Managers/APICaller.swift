@@ -117,4 +117,45 @@ class APICaller{
         }.resume()
     }
     
+    func discoverMovies(completion: @escaping (Result<[Title], Error>) -> Void){
+        guard let url = URL(string: "\(Constants.BASE_URL)/3/discover/movie?api_key=\(Constants.API_KEY)") else{
+            print("DEBUG: Problem in URL")
+            return
+        }
+
+        let task = URLSession.shared.dataTask(with: URLRequest(url: url)) { data, _, error in
+            guard let data = data, error == nil else {
+                print("DEBUG: Problem in fetching data")
+                return
+            }
+            do{
+                let decodedData = try JSONDecoder().decode(Titles.self, from: data)
+                completion(.success(decodedData.results))
+            }catch{
+                completion(.failure(error))
+            }
+        }.resume()
+    }
+    
+    func search(with query: String, completion: @escaping (Result<[Title], Error>) -> Void){
+        
+        guard let query = query.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) else {return}
+        guard let url = URL(string: "\(Constants.BASE_URL)/3/search/movie?query=\(query)&api_key=\(Constants.API_KEY)") else{
+            print("DEBUG: Problem in URL")
+            return
+        }
+
+        let task = URLSession.shared.dataTask(with: URLRequest(url: url)) { data, _, error in
+            guard let data = data, error == nil else {
+                print("DEBUG: Problem in fetching data")
+                return
+            }
+            do{
+                let decodedData = try JSONDecoder().decode(Titles.self, from: data)
+                completion(.success(decodedData.results))
+            }catch{
+                completion(.failure(error))
+            }
+        }.resume()
+    }
 }
