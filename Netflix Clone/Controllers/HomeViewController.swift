@@ -16,7 +16,7 @@ class HomeViewController: UIViewController {
         table.register(CollectionViewTableViewCell.self, forCellReuseIdentifier: CollectionViewTableViewCell.identifier)
         return table
     }()
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
@@ -28,11 +28,13 @@ class HomeViewController: UIViewController {
         let headerView = HeroHeaderUiView(frame: CGRect(x: 0, y: 0, width: view.bounds.width, height: 500))
         homeFeedTable.tableHeaderView = headerView
         configureNavBar()
+        
     }
     
+    
     private func configureNavBar(){
-        var image = UIImage(named: "netflixLogo")?.withRenderingMode(.alwaysOriginal)
-//        navigationItem.leftBarButtonItem = UIBarButtonItem(image: image, style: .done, target: self, action: nil)
+        //        var image = UIImage(named: "netflixLogo")?.withRenderingMode(.alwaysOriginal)
+        //        navigationItem.leftBarButtonItem = UIBarButtonItem(image: image, style: .done, target: self, action: nil)
         setupLeftBarItem()
         navigationItem.rightBarButtonItems = [
             UIBarButtonItem(image: UIImage(systemName: "person"), style: .done, target: self, action: nil),
@@ -45,7 +47,7 @@ class HomeViewController: UIViewController {
         let leftButton = UIButton(type: .custom)
         leftButton.frame = CGRect(x: 0.0, y: 0.0, width: 30, height: 40)
         leftButton.setImage(UIImage(named:"netflixLogo")?.withRenderingMode(.alwaysOriginal), for: .normal)
-
+        
         let leftBarItem = UIBarButtonItem(customView: leftButton)
         let currWidth = leftBarItem.customView?.widthAnchor.constraint(equalToConstant: 30)
         currWidth?.isActive = true
@@ -54,11 +56,12 @@ class HomeViewController: UIViewController {
         self.navigationItem.leftBarButtonItem = leftBarItem
     }
     
+    
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         homeFeedTable.frame = view.bounds
     }
-
+    
 }
 
 extension HomeViewController: UITableViewDelegate, UITableViewDataSource{
@@ -75,6 +78,55 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource{
             return UITableViewCell()
         }
         
+        switch indexPath.section{
+        case Sections.TrendingMovies.rawValue:
+            APICaller.shared.getTrendingMovies { results in
+                switch results{
+                case .success(let titles):
+                    cell.configure(with: titles)
+                case .failure(let error):
+                    print(error.localizedDescription)
+                }
+            }
+        case Sections.TrendingTv.rawValue:
+            APICaller.shared.getTrendingTv { results in
+                switch results{
+                case .success(let titles):
+                    cell.configure(with: titles)
+                case .failure(let error):
+                    print(error.localizedDescription)
+                }
+            }
+        case Sections.Popular.rawValue:
+            APICaller.shared.getPopular { results in
+                switch results{
+                case .success(let titles):
+                    cell.configure(with: titles)
+                case .failure(let error):
+                    print(error.localizedDescription)
+                }
+            }
+        case Sections.UpcomingMovies.rawValue:
+            APICaller.shared.getUpcomingMovies { results in
+                switch results{
+                case .success(let titles):
+                    cell.configure(with: titles)
+                case .failure(let error):
+                    print(error.localizedDescription)
+                }
+            }
+        case Sections.TopRated.rawValue:
+            APICaller.shared.getTopRated { results in
+                switch results{
+                case .success(let titles):
+                    cell.configure(with: titles)
+                case .failure(let error):
+                    print(error.localizedDescription)
+                }
+            }
+        default:
+            return UITableViewCell()
+        }
         return cell
     }
     
@@ -91,13 +143,14 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource{
         header.textLabel?.font = .systemFont(ofSize: 18, weight: .bold)
         header.textLabel?.frame = CGRect(x: header.bounds.origin.x + 20, y: header.bounds.origin.y, width: 100, height: header.bounds.height)
         header.textLabel?.textColor = .white
+        header.textLabel?.text =  header.textLabel?.text?.capitalizeFirstLetter()
     }
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         return sectionTitles[section]
     }
     
-
+    
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let defaultOffset = view.safeAreaInsets.top
