@@ -14,6 +14,7 @@ struct Titles:Codable{
 struct Title:Codable{
     let id: Int
     let original_title: String?
+    let title: String?
     let overview: String?
     let poster_path: String?
     let media_type: String?

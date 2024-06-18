@@ -13,18 +13,24 @@ enum Sections: Int{
     case Popular = 2
     case UpcomingMovies = 3
     case TopRated = 4
-    }
+}
+
+protocol CollectionViewTableViewCellDelegate: AnyObject{
+    func CollectionViewTableViewCellDidTapCell(_ cell: CollectionViewTableViewCell, viewModel: TitlePreviewViewModel)
+}
 
 class CollectionViewTableViewCell: UITableViewCell {
     
     static let identifier = "CollectionViewTableViewCell"
     private var titles: [Title] = [Title]()
+    weak var delegate: CollectionViewTableViewCellDelegate?
     
     private let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
         layout.itemSize = CGSize(width: 140, height: 200)
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.isUserInteractionEnabled = true
         collectionView.register(TitleCollectionViewCell.self, forCellWithReuseIdentifier: TitleCollectionViewCell.identifier)
         return collectionView
     }()
@@ -73,5 +79,34 @@ extension CollectionViewTableViewCell: UICollectionViewDelegate, UICollectionVie
         return cell
     }
     
-    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        collectionView.deselectItem(at: indexPath, animated: true)
+        let title = titles[indexPath.row]
+        guard let titleName = title.original_title ?? title.title else {
+            return
+        }
+        
+        
+        APICaller.shared.getMovie(with: titleName + " trailer") { [weak self] result in
+            switch result {
+            case .success(let videoElement):
+                
+                let title = self?.titles[indexPath.row]
+                guard let titleOverview = title?.overview else {
+                    return
+                }
+                guard let strongSelf = self else {
+                    return
+                }
+                let viewModel = TitlePreviewViewModel(title: titleName, youtubeView: videoElement, titleOverview: titleOverview)
+                self?.delegate?.CollectionViewTableViewCellDidTapCell(strongSelf, viewModel: viewModel)
+                
+            case .failure(let error):
+                print(error.localizedDescription)
+            }
+            
+            
+        }
+        
+    }
 }

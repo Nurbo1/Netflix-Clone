@@ -10,13 +10,13 @@ import UIKit
 class UpcomingViewController: UIViewController {
     
     var titles: [Title] = [Title]()
-
+    
     private let upcomingTable: UITableView = {
         let table = UITableView()
         table.register(TitleTableViewCell.self, forCellReuseIdentifier: TitleTableViewCell.identifier)
         return table
     }()
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
@@ -60,6 +60,7 @@ extension UpcomingViewController: UITableViewDelegate, UITableViewDataSource{
         guard let cell = tableView.dequeueReusableCell(withIdentifier: TitleTableViewCell.identifier, for: indexPath) as? TitleTableViewCell else{
             return UITableViewCell()
         }
+        
         let title = titles[indexPath.row]
         cell.configure(with: TitleViewModel(titleName: title.original_title ?? "uknown", posterUrl: title.poster_path ?? ""))
         
@@ -70,4 +71,28 @@ extension UpcomingViewController: UITableViewDelegate, UITableViewDataSource{
         return 140
     }
     
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        upcomingTable.deselectRow(at: indexPath, animated: true)
+        let title = titles[indexPath.row]
+        
+        guard let titleName = title.original_title ?? title.title else {
+            return
+        }
+        
+        APICaller.shared.getMovie(with: titleName) { [weak self] results in
+            switch results{
+                
+            case .success(let videoElement):
+                DispatchQueue.main.async {
+                    let vc = TitlePreviewViewController()
+                    vc.configure(with: TitlePreviewViewModel(title: titleName, youtubeView: videoElement, titleOverview: title.overview ?? ""))
+                    self?.navigationController?.pushViewController(vc, animated: true)
+                }
+            case .failure(let error):
+                print(error.localizedDescription)
+            }
+        }
+    }
+    
 }
+

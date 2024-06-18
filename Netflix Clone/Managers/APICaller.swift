@@ -10,6 +10,8 @@ import Foundation
 struct Constants{
     static let API_KEY = "f2f9a961f3cda3551bb42d3694d326c0"
     static let BASE_URL = "https://api.themoviedb.org"
+    static let YoutubeAPI_KEY = "AIzaSyDsIftUvbCcr1-sjxriqQwy3oAmtVeZ4Jc"
+    static let YoutubeBase_URL = "https://youtube.googleapis.com/youtube/v3/search?"
 }
 enum APIError:Error{
     case failedToGetData
@@ -17,7 +19,6 @@ enum APIError:Error{
 
 class APICaller{
     static let shared = APICaller()
-    
     
     func getTrendingMovies(completion: @escaping (Result<[Title], Error>) -> Void){
         guard let url = URL(string: "\(Constants.BASE_URL)/3/trending/movie/day?api_key=\(Constants.API_KEY)") else{
@@ -62,7 +63,6 @@ class APICaller{
             print("DEBUG: Problem in URL")
             return
         }
-        print(url)
         let task = URLSession.shared.dataTask(with: URLRequest(url: url)) { data, _, error in
             guard let data = data, error == nil else {
                 print("DEBUG: Problem in fetching data")
@@ -82,7 +82,6 @@ class APICaller{
             print("DEBUG: Problem in URL")
             return
         }
-        print(url)
         let task = URLSession.shared.dataTask(with: URLRequest(url: url)) { data, _, error in
             guard let data = data, error == nil else {
                 print("DEBUG: Problem in fetching data")
@@ -157,5 +156,27 @@ class APICaller{
                 completion(.failure(error))
             }
         }.resume()
+    }
+    
+    func getMovie(with query: String, completion: @escaping (Result<VideoElement, Error>) -> Void){
+        
+        guard let query = query.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) else {return}
+        guard let url = URL(string: "\(Constants.YoutubeBase_URL)q=\(query)&key=\(Constants.YoutubeAPI_KEY)") else{
+            print("DEBUG: Problem in URL")
+            return
+        }
+        let task = URLSession.shared.dataTask(with: URLRequest(url: url)) { data, _, error in
+            guard let data = data, error == nil else {
+                print("DEBUG: Problem in fetching data")
+                return
+            }
+            do{
+                print(data)
+                let decodedData = try JSONDecoder().decode(YoutubeSearchResponse.self, from: data)
+                completion(.success(decodedData.items?[0] ?? VideoElement(id: idVideoElement(kind: "", videoId: ""))))
+            }catch{
+                completion(.failure(error))
+                print(error)
+            }        }.resume()
     }
 }
