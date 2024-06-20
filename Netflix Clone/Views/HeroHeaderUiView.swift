@@ -8,7 +8,7 @@
 import UIKit
 
 class HeroHeaderUiView: UIView {
-    
+        
     private let heroImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
@@ -37,7 +37,7 @@ class HeroHeaderUiView: UIView {
         return button
     }()
     
-    
+
     private func addGradient(){
         let gradientLayer = CAGradientLayer()
         

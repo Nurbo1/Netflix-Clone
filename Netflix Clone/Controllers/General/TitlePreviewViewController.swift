@@ -11,6 +11,7 @@ import WebKit
 
 class TitlePreviewViewController: UIViewController {
     
+    private var model: TitlePreviewViewModel?
     
     private let titleLabel: UILabel = {
        
@@ -40,7 +41,6 @@ class TitlePreviewViewController: UIViewController {
         button.setTitleColor(.white, for: .normal)
         button.layer.cornerRadius = 8
         button.layer.masksToBounds = true
-        
         return button
     }()
     
@@ -63,7 +63,6 @@ class TitlePreviewViewController: UIViewController {
         
     }
     
-
     
     func configureConstraints() {
         let webViewConstraints = [
@@ -100,6 +99,7 @@ class TitlePreviewViewController: UIViewController {
     
     
     public func configure(with model: TitlePreviewViewModel) {
+        self.model = model
         titleLabel.text = model.title
         overviewLabel.text = model.titleOverview
         
