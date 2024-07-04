@@ -74,17 +74,16 @@ extension UpcomingViewController: UITableViewDelegate, UITableViewDataSource{
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         upcomingTable.deselectRow(at: indexPath, animated: true)
         let title = titles[indexPath.row]
-        
         guard let titleName = title.original_title ?? title.title else {
             return
         }
-        
         APICaller.shared.getMovie(with: titleName) { [weak self] results in
             switch results{
                 
             case .success(let videoElement):
                 DispatchQueue.main.async {
                     let vc = TitlePreviewViewController()
+                    vc.delegate = self
                     vc.configure(with: TitlePreviewViewModel(title: titleName, youtubeView: videoElement, titleOverview: title.overview ?? ""))
                     self?.navigationController?.pushViewController(vc, animated: true)
                 }
@@ -93,6 +92,25 @@ extension UpcomingViewController: UITableViewDelegate, UITableViewDataSource{
             }
         }
     }
-    
 }
 
+extension UpcomingViewController: TitlePreviewViewControllerDelegate {
+    func titlePreviewViewControllerDidTapDownload(_ viewController: TitlePreviewViewController, titleName: String) {
+        guard let model = titles.first(where: { $0.original_title == titleName }) else {
+            print("Model not found for title: \(titleName)")
+            return
+        }
+        
+        DataPersistenceManager.shared.downloadTitleWith(model: model) { result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success():
+                    NotificationCenter.default.post(name: NSNotification.Name("downloaded"), object: nil)
+                    print("Download successful!")
+                case .failure(let error):
+                    print("Failed to download: \(error.localizedDescription)")
+                }
+            }
+        }
+    }
+}

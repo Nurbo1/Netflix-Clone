@@ -16,8 +16,9 @@ class DataPersistenceManager{
         case failedToFetchData
         case failedToDeleteData
     }
-    static let shared = DataPersistenceManager()
     
+    static let shared = DataPersistenceManager()
+     
     func downloadTitleWith(model: Title, completion: @escaping ((Result<Void, Error>) -> Void) ){
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else{
             return

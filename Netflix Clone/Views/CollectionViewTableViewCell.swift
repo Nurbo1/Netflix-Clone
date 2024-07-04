@@ -37,7 +37,6 @@ class CollectionViewTableViewCell: UITableViewCell {
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        
         contentView.addSubview(collectionView)
         collectionView.dataSource = self
         collectionView.delegate = self
@@ -47,7 +46,6 @@ class CollectionViewTableViewCell: UITableViewCell {
         fatalError()
     }
     
-    
     override func layoutSubviews() {
         super.layoutSubviews()
         collectionView.frame = contentView.bounds
@@ -55,7 +53,6 @@ class CollectionViewTableViewCell: UITableViewCell {
     
     public func configure(with titles: [Title]){
         self.titles = titles
-        
         DispatchQueue.main.async { [weak self] in
             self?.collectionView.reloadData()
         }
@@ -97,7 +94,6 @@ extension CollectionViewTableViewCell: UICollectionViewDelegate, UICollectionVie
             return
         }
         
-        
         APICaller.shared.getMovie(with: titleName + " trailer") { [weak self] result in
             switch result {
             case .success(let videoElement):
@@ -111,7 +107,6 @@ extension CollectionViewTableViewCell: UICollectionViewDelegate, UICollectionVie
                 }
                 let viewModel = TitlePreviewViewModel(title: titleName, youtubeView: videoElement, titleOverview: titleOverview)
                 self?.delegate?.CollectionViewTableViewCellDidTapCell(strongSelf, viewModel: viewModel)
-                
             case .failure(let error):
                 print(error.localizedDescription)
             }
@@ -131,3 +126,4 @@ extension CollectionViewTableViewCell: UICollectionViewDelegate, UICollectionVie
     }
     
 }
+

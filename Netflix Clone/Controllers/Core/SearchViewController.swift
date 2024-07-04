@@ -9,7 +9,7 @@ import UIKit
 
 class SearchViewController: UIViewController {
     
-    
+    var searchTimer: Timer?
     var titles: [Title] = [Title]()
     
     private let discoverTable: UITableView = {
@@ -92,6 +92,7 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource{
             case .success(let videoElement):
                 DispatchQueue.main.async {
                     let vc = TitlePreviewViewController()
+                    vc.delegate = self
                     vc.configure(with: TitlePreviewViewModel(title: titleName, youtubeView: videoElement, titleOverview: title.overview ?? ""))
                     self?.navigationController?.pushViewController(vc, animated: true)
                 }
@@ -106,28 +107,76 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource{
 extension SearchViewController: UISearchResultsUpdating, SearchResultsViewControllerDelegate{
     
     func updateSearchResults(for searchController: UISearchController) {
-        let searchBar = searchController.searchBar
+        print("search")
         
-        guard let query = searchBar.text,
-              !query.trimmingCharacters(in: .whitespaces).isEmpty,
-              query.trimmingCharacters(in: .whitespaces).count >= 3,
-              let resultsController = searchController.searchResultsController as? SearchResultsViewController else{
+        if(searchTimer?.isValid == true){
             return
         }
-        resultsController.delegate = self
         
-        APICaller.shared.search(with: query) { results in
-            DispatchQueue.main.async {
-                switch results{
-                case .success(let titles):
-                    resultsController.titles = titles
-                    resultsController.searchResultsCollectionView.reloadData()
-                case .failure(let error):
-                    print(error.localizedDescription)
-                }
-            }
-        }
-    }
+         searchTimer = Timer.scheduledTimer(withTimeInterval: 2, repeats: false) { [weak self] _ in
+                     
+            guard let self = self else { return }
+               
+               let searchBar = searchController.searchBar
+               
+               guard let query = searchBar.text,
+                     !query.trimmingCharacters(in: .whitespaces).isEmpty,
+                     query.trimmingCharacters(in: .whitespaces).count >= 3,
+                     let resultsController = searchController.searchResultsController as? SearchResultsViewController else {
+                   print("problems with query")
+                   return
+               }
+              
+               
+               
+               resultsController.delegate = self
+            
+             print("request")
+               APICaller.shared.search(with: query) { results in
+                   DispatchQueue.main.async {
+                       switch results {
+                       case .success(let titles):
+                           resultsController.titles = titles
+                           resultsController.searchResultsCollectionView.reloadData()
+                       case .failure(let error):
+                           print(error.localizedDescription)
+                       }
+                   }
+               }
+            
+            searchTimer?.invalidate()
+           }
+       }
+    
+    
+    
+//    func updateSearchResults(for searchController: UISearchController)  {
+//        
+//        searchTimer?.invalidate()
+//        
+//      
+//            
+//            guard let query = searchBar.text,
+//                  !query.trimmingCharacters(in: .whitespaces).isEmpty,
+//                  query.trimmingCharacters(in: .whitespaces).count >= 3,
+//                  let resultsController = searchController.searchResultsController as? SearchResultsViewController else{
+//                return
+//            }
+//            resultsController.delegate = self
+//            
+//            APICaller.shared.search(with: query) { results in
+//                DispatchQueue.main.async {
+//                    switch results{
+//                    case .success(let titles):
+//                        resultsController.titles = titles
+//                        resultsController.searchResultsCollectionView.reloadData()
+//                    case .failure(let error):
+//                        print(error.localizedDescription)
+//                    }
+//                }
+//            }
+//        
+//    }
     
     func searchResultsViewControllerDidTapItem(_ viewModel: TitlePreviewViewModel) {
         DispatchQueue.main.async { [weak self] in
@@ -138,3 +187,23 @@ extension SearchViewController: UISearchResultsUpdating, SearchResultsViewContro
     }
 }
 
+extension SearchViewController: TitlePreviewViewControllerDelegate {
+    func titlePreviewViewControllerDidTapDownload(_ viewController: TitlePreviewViewController, titleName: String) {
+        guard let model = titles.first(where: { $0.original_title == titleName }) else {
+            print("Model not found for title: \(titleName)")
+            return
+        }
+        
+        DataPersistenceManager.shared.downloadTitleWith(model: model) { result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success():
+                    NotificationCenter.default.post(name: NSNotification.Name("downloaded"), object: nil)
+                    print("Download successful!")
+                case .failure(let error):
+                    print("Failed to download: \(error.localizedDescription)")
+                }
+            }
+        }
+    }
+}

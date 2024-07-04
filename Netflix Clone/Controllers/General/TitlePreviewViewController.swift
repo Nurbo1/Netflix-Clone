@@ -8,10 +8,14 @@
 import UIKit
 import WebKit
 
+protocol TitlePreviewViewControllerDelegate: AnyObject {
+    func titlePreviewViewControllerDidTapDownload(_ viewController: TitlePreviewViewController, titleName: String)
+}
 
 class TitlePreviewViewController: UIViewController {
     
-    private var model: TitlePreviewViewModel?
+    var titleName: String?
+    weak var delegate: TitlePreviewViewControllerDelegate?
     
     private let titleLabel: UILabel = {
        
@@ -41,6 +45,7 @@ class TitlePreviewViewController: UIViewController {
         button.setTitleColor(.white, for: .normal)
         button.layer.cornerRadius = 8
         button.layer.masksToBounds = true
+        button.addTarget(self, action: #selector(downloadButtonTapped), for: .touchUpInside)
         return button
     }()
     
@@ -57,12 +62,13 @@ class TitlePreviewViewController: UIViewController {
         view.addSubview(titleLabel)
         view.addSubview(overviewLabel)
         view.addSubview(downloadButton)
-        
         configureConstraints()
-        
-        
     }
     
+    @objc func downloadButtonTapped(){
+        print("tapped")
+        self.delegate?.titlePreviewViewControllerDidTapDownload(self, titleName: titleName ?? "")
+    }
     
     func configureConstraints() {
         let webViewConstraints = [
@@ -99,14 +105,13 @@ class TitlePreviewViewController: UIViewController {
     
     
     public func configure(with model: TitlePreviewViewModel) {
-        self.model = model
+        self.titleName = model.title
         titleLabel.text = model.title
         overviewLabel.text = model.titleOverview
         
         guard let url = URL(string: "https://www.youtube.com/embed/\(model.youtubeView.id.videoId)") else {
             return
         }
-        
         webView.load(URLRequest(url: url))
     }
 

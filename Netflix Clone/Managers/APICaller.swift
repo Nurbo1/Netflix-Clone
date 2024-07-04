@@ -18,7 +18,10 @@ enum APIError:Error{
 }
 
 class APICaller{
+    
     static let shared = APICaller()
+    
+    var searchResultTitles: [String:[Title]] = [:]
     
     func getTrendingMovies(completion: @escaping (Result<[Title], Error>) -> Void){
         guard let url = URL(string: "\(Constants.BASE_URL)/3/trending/movie/day?api_key=\(Constants.API_KEY)") else{
@@ -136,9 +139,18 @@ class APICaller{
         }.resume()
     }
     
-    func search(with query: String, completion: @escaping (Result<[Title], Error>) -> Void){
+    func search(with query: String, completion: @escaping (Result<[Title], Error>) -> Void) {
         
         guard let query = query.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) else {return}
+        
+        for key in searchResultTitles.keys{
+            if key == query{
+                print("From cache")
+                completion(.success(searchResultTitles[key]!))
+                return
+            }
+        }
+            
         guard let url = URL(string: "\(Constants.BASE_URL)/3/search/movie?query=\(query)&api_key=\(Constants.API_KEY)") else{
             print("DEBUG: Problem in URL")
             return
@@ -150,7 +162,10 @@ class APICaller{
                 return
             }
             do{
+                print("real search")
+
                 let decodedData = try JSONDecoder().decode(Titles.self, from: data)
+                self.searchResultTitles[query] = decodedData.results
                 completion(.success(decodedData.results))
             }catch{
                 completion(.failure(error))

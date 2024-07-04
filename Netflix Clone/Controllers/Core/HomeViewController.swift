@@ -71,12 +71,10 @@ class HomeViewController: UIViewController {
         self.navigationItem.leftBarButtonItem = leftBarItem
     }
     
-    
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         homeFeedTable.frame = view.bounds
     }
-    
 }
 
 extension HomeViewController: UITableViewDelegate, UITableViewDataSource{
@@ -167,17 +165,13 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource{
         return sectionTitles[section]
     }
     
-    
-    
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let defaultOffset = view.safeAreaInsets.top
         let offset = scrollView.contentOffset.y + defaultOffset
-        
         navigationController?.navigationBar.transform = .init(translationX: 0, y: min(0,-offset))
     }
     
 }
-
 
 extension HomeViewController: CollectionViewTableViewCellDelegate{
     func CollectionViewTableViewCellDidTapCell(_ cell: CollectionViewTableViewCell, viewModel: TitlePreviewViewModel) {
@@ -189,3 +183,4 @@ extension HomeViewController: CollectionViewTableViewCellDelegate{
         }
     }
 }
+

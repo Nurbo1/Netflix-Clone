@@ -39,7 +39,6 @@ class TitleTableViewCell: UITableViewCell {
         contentView.addSubview(titlePosterImageView)
         contentView.addSubview(playTitleButton)
         contentView.addSubview(titleLabel)
-        
         applyConstraints()
     }
     
