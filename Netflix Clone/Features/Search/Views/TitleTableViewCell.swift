@@ -42,12 +42,11 @@ class TitleTableViewCell: UITableViewCell {
         applyConstraints()
     }
     
-    public func configure(with model: TitleViewModel){
-        guard let url = URL(string: "https://image.tmdb.org/t/p/w500\(model.posterUrl)") else{
-            return
+    func configure(with model: SearchViewModel){
+        if let url = URL(string: "https://image.tmdb.org/t/p/w500\(model.imageURL)") {
+            titlePosterImageView.sd_setImage(with: url, completed: nil)
         }
-        titlePosterImageView.sd_setImage(with: url, completed: nil)
-        titleLabel.text = model.titleName
+        titleLabel.text = model.title
     }
     
     private func applyConstraints(){

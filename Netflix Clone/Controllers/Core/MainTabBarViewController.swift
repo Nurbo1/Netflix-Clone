@@ -8,15 +8,16 @@
 import UIKit
 
 class MainTabBarViewController: UITabBarController {
-
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         view.backgroundColor = .yellow
         
         let vc1 = UINavigationController(rootViewController: HomeViewController())
-        let vc2 = UINavigationController(rootViewController: UpcomingViewController())
-        let vc3 = UINavigationController(rootViewController: SearchViewController())
+        let vc2 = UINavigationController(rootViewController: UpcomingViewControllerV2())
+        let vc3 = UINavigationController(rootViewController: SearchViewControllerV2(presenter: SearchPresenter(apiCaller: APICaller())))
         let vc4 = UINavigationController(rootViewController: DownloadsViewController())
         
         

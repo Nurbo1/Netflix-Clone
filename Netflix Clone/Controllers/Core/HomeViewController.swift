@@ -32,19 +32,26 @@ class HomeViewController: UIViewController {
         configureHeroHeaderView()
     }
     
-    
     private func configureHeroHeaderView(){
         headerView = HeroHeaderUiView(frame: CGRect(x: 0, y: 0, width: view.bounds.width, height: 500))
         homeFeedTable.tableHeaderView = headerView
-        APICaller.shared.getTrendingMovies { [weak self] results in
-            switch results{
-                
-            case .success(let titles):
-                self?.randomTrendingMovie = titles.randomElement()
-                self?.headerView?.configure(with: TitleViewModel(titleName: self?.randomTrendingMovie?.original_title ?? "unknown", posterUrl: self?.randomTrendingMovie?.poster_path ?? ""))
-            case .failure(let error):
-                print(error.localizedDescription)
-            }
+        
+        //        APICaller.shared.getTrendingMovies { [weak self] results in
+        //            switch results{
+        //
+        //            case .success(let titles):
+        //                self?.randomTrendingMovie = titles.randomElement()
+        //                self?.headerView?.configure(with: TitleViewModel(titleName: self?.randomTrendingMovie?.original_title ?? "unknown", posterUrl: self?.randomTrendingMovie?.poster_path ?? ""))
+        //            case .failure(let error):
+        //                print(error.localizedDescription)
+        //            }
+        //        }
+        
+        Task{ @MainActor in
+            let titles = try await APICaller.shared.getTrendingMovies()
+            self.randomTrendingMovie = titles.randomElement()
+            self.headerView?.configure(with: TitleViewModel(titleName: self.randomTrendingMovie?.original_title ?? "unknown", posterUrl: self.randomTrendingMovie?.poster_path ?? ""))
+            
         }
     }
     
@@ -95,13 +102,19 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource{
         
         switch indexPath.section{
         case Sections.TrendingMovies.rawValue:
-            APICaller.shared.getTrendingMovies { results in
-                switch results{
-                case .success(let titles):
-                    cell.configure(with: titles)
-                case .failure(let error):
-                    print(error.localizedDescription)
-                }
+//            print("hey")
+//            APICaller.shared.getTrendingMovies { results in
+//                switch results{
+//                case .success(let titles):
+//                    cell.configure(with: titles)
+//                case .failure(let error):
+//                    print(error.localizedDescription)
+//                }
+//            }
+            
+            Task{ @MainActor in
+                let titles = try await APICaller.shared.getTrendingMovies()
+                cell.configure(with: titles)
             }
         case Sections.TrendingTv.rawValue:
             APICaller.shared.getTrendingTv { results in

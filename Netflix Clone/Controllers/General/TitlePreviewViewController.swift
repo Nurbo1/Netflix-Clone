@@ -45,7 +45,7 @@ class TitlePreviewViewController: UIViewController {
         button.setTitleColor(.white, for: .normal)
         button.layer.cornerRadius = 8
         button.layer.masksToBounds = true
-        button.addTarget(self, action: #selector(downloadButtonTapped), for: .touchUpInside)
+        button.addTarget(TitlePreviewViewController.self, action: #selector(downloadButtonTapped), for: .touchUpInside)
         return button
     }()
     

@@ -37,7 +37,6 @@ class HeroHeaderUiView: UIView {
         return button
     }()
     
-
     private func addGradient(){
         let gradientLayer = CAGradientLayer()
         
